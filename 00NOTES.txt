@@ -1,0 +1,247 @@
+# EPN, Fri May 29 13:33:28 2015
+# pwd: /panfs/pan1/dnaorg/programs/15_0529_dnaorg_virus_wrapper
+# git repository url: https://github.com/nawrockie/dnaorg_virus_wrapper.git
+#
+# Example of running dnaorg_virus_wrapper.pl to compare viral genomes
+# of the same species.
+#
+# This is a wrapper Perl script which calls other programs,
+# including those housed/described in the following directories:
+#
+# /panfs/pan1/dnaorg/programs/15_0528_dnaorg_compare_genomes/
+# /panfs/pan1/dnaorg/programs/15_0528_dnaorg_parse_ftable/
+# /panfs/pan1/dnaorg/programs/15_0415_dnaorg_fetch_dna_wrapper/
+# /panfs/pan1/dnaorg/programs/15_0324_esl_fetch_cds/
+# 
+# Note that /panfs/pan1/dnaorg/programs/15_0415_dnaorg_fetch_dna_wrapper/
+# is also a wrapper script.
+#
+#######################
+# More information
+#######################
+#
+# For more information, see the 00NOTES.* files in the above listed
+# 'dnaorg/programs/' directories, where available.
+#
+# Also, see /home/nawrocke/notebook/15_0518_dnaorg_virus_compare_script/00LOG.txt
+# for notes on development and testing of this program and several of 
+# the scripts it calls.
+# 
+#######################
+# Prerequisites
+#######################
+# 
+# Directories that include the BioEasel perl modules must be part of your
+# $PERL5LIB environment variable in order for esl-fetch-cds.pl to work.
+# 
+# For bash shell users
+source /panfs/pan1/dnaorg/programs/setup-bio-easel.bash.sh
+# For C shell or C shell compatible users
+source /panfs/pan1/dnaorg/programs/setup-bio-easel.csh.sh
+#
+# (THESE PREREQUISITES ARE THE SAME AS THOSE NEEDED FOR 
+#  dnaorg_fetch_dna_wrapper.pl)
+#
+#######################
+# Usage and options
+#######################
+# The default output is informative about how to use the script:
+# $ perl dnaorg_virus_wrapper.pl
+##
+## dnaorg_virus_wrapper.pl <list file of accessions with representative genome first (must end in .ntlist)
+##
+## Given a file with a list of accessions (typically for viral genomes of the
+## same species) the script performs three steps, each by calling a different,
+## other script:
+## 
+## # Step 1: create feature table with dnaorg_fetch_dna_wrapper.pl.
+## # Step 2: parse feature table into CDS and other tables with dnaorg_parse_ftable.pl.
+## # Step 3: compare genomes based on CDS annotation and group together
+## #         into classes, and extract fasta sequences for each gene.
+##
+##
+##
+#################################
+# Example run:
+#
+# Input file: NC_010435.ntlist
+#
+## > cat NC_0104035.ntlist
+## NC_010435
+## HM448898
+## FN806778
+## EU822322
+## FN806777
+## EU366903
+## EU822321
+# 
+# The script will progress through the 3 steps in turn and then output
+# the *.compare file that is created in step 3 by
+# dnaorg_compare_genomes.pl.  The *.compare file begins below at the
+# line that starts with 'dnaorg_compare_genomes.pl:'
+# 
+## > perl dnaorg_virus_wrapper.pl NC_010435.ntlist 
+## Step 1: creating feature table ... done. [perl /panfs/pan1/dnaorg/programs/dnaorg_fetch_dna_wrapper.pl -f -ntlist -ftable -d NC_010435 NC_010435.ntlist > /dev/null]
+## Step 2: parsing feature table ... done. [perl /panfs/pan1/dnaorg/programs/dnaorg_parse_ftable.pl -d NC_010435 NC_010435/NC_010435.ftable NC_010435 > /dev/null]
+## Step 3: comparing genomes ... done. [perl /panfs/pan1/dnaorg/programs/dnaorg_compare_genomes.pl NC_010435 NC_010435/NC_010435.ntlist.not_suppressed > NC_010435/NC_010435.compare]
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## dnaorg_compare_genomes.pl: Compare GenBank annotation of genomes
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## command: /panfs/pan1/dnaorg/programs/dnaorg_compare_genomes.pl  NC_010435 NC_010435/NC_010435.ntlist.not_suppressed
+## date:    Fri May 29 14:13:11 2015
+##
+##accn       #cds   #pos   #neg  #both  #unkn  strand-string  cls  tot-len       g1     g2     g3     g4     g5     g6     g7
+#NC_010435      7      2      5      0      0  +-+----          1     2740      348    318    771    405    453   1092    300
+#EU822322       7      2      5      0      0  +-+----          1     2740      348    318    771    405    453   1092    300
+#EU366903       7      2      5      0      0  +-+----          1     2740      348    318    771    405    453   1092    300
+#EU822321       7      2      5      0      0  +-+----          1     2740      348    318    771    405    453   1092    300
+#
+#HM448898       6      2      4      0      0  ++----           2     2751      348    771    405    453   1092    300
+#FN806778       6      2      4      0      0  ++----           2     2750      348    771    405    453   1092    300
+#FN806777       6      2      4      0      0  ++----           2     2750      348    771    405    453   1092    300
+#
+#
+#Number-of-classes:                 2
+#Number-of-genes-in-class-1:        7
+#Number-of-genes-in-class-2:        6
+#Average-number-of-genes-per-class: 6.5
+#
+## Fetching   4 sequences for class  1 gene  1 ... done. [NC_010435/NC_010435.c1.g1.fa]
+## Fetching   4 sequences for class  1 gene  2 ... done. [NC_010435/NC_010435.c1.g2.fa]
+## Fetching   4 sequences for class  1 gene  3 ... done. [NC_010435/NC_010435.c1.g3.fa]
+## Fetching   4 sequences for class  1 gene  4 ... done. [NC_010435/NC_010435.c1.g4.fa]
+## Fetching   4 sequences for class  1 gene  5 ... done. [NC_010435/NC_010435.c1.g5.fa]
+## Fetching   4 sequences for class  1 gene  6 ... done. [NC_010435/NC_010435.c1.g6.fa]
+## Fetching   4 sequences for class  1 gene  7 ... done. [NC_010435/NC_010435.c1.g7.fa]
+## Fetching   3 sequences for class  2 gene  1 ... done. [NC_010435/NC_010435.c2.g1.fa]
+## Fetching   3 sequences for class  2 gene  2 ... done. [NC_010435/NC_010435.c2.g2.fa]
+## Fetching   3 sequences for class  2 gene  3 ... done. [NC_010435/NC_010435.c2.g3.fa]
+## Fetching   3 sequences for class  2 gene  4 ... done. [NC_010435/NC_010435.c2.g4.fa]
+## Fetching   3 sequences for class  2 gene  5 ... done. [NC_010435/NC_010435.c2.g5.fa]
+## Fetching   3 sequences for class  2 gene  6 ... done. [NC_010435/NC_010435.c2.g6.fa]
+## 
+###########################################
+## Naming convention for output fasta files
+###########################################
+## 
+## For an input .ntlist file of <s>.ntlist
+## (<s> in the above example being 'NC_010435')
+## 
+## The fasta files will be in a new directory called
+## '<s>' and will be named as follows:
+## 
+## <s>.c<n1>.g<n2>.fa
+## 
+## Where <n1> is the class number and <n2> is the
+## gene number (in 5' to 3' order of minimum coordinate
+## in the CDS annotation, regardless of strand).
+## 
+## The line beginning with 
+## 'Number-of-classes:'
+## gives the number of classes.
+## 
+## And the line(s) beginning with
+## 'Number-of-genes-in-class-<n1>:'
+## gives the number of genes in class <n1>.
+##
+##################################################
+## Naming convention for sequences in fasta files
+##################################################
+##
+## In the fasta files, sequences are named as follows:
+## 
+## <a>:class<n1>:gene<n2>:<s1>:<start1>:<stop1>:<strand1>: ... :<sN>:<startN>:<stopN>:<strandN>
+## 
+## <a> is the representative accession (first accession in the .ntlist file,
+## often this will be <s> for a file <s>.ntlist).
+##
+## 'N' is the number of segments/exons the sequence is composed of.
+## 
+## <s1>      is the accession from which the first exon derived from
+## <start1>  is start coordinate of first exon
+## <stop1>   is stop coordinate of first exon
+## <strand1> is strand of first exon
+## 
+## Note that all the sequences in the same file will begin with:
+## <a>:class<n1>:gene<n2>
+## And then differ in <s1>.
+## 
+## For example, in the example run above for NC_010435.ntlist, 
+## The sequences in the file NC_010435/NC_010435.c1.g1.fa are
+## named:
+## 
+##>NC_010435:class1:gene1:NC_010435:118:465:+:
+##>NC_010435:class1:gene1:EU822322:118:465:+:
+##>NC_010435:class1:gene1:EU366903:118:465:+:
+##>NC_010435:class1:gene1:EU822321:118:465:+:
+##
+## 
+##########################
+## How classes are defined
+##########################
+##
+## For each genome, a strand string is determined in step 3
+## (dnaorg_compare_genomes.pl) which is the strand on which of the
+## genes in that genome appear in order of the minimum coordinate in
+## the annotation regardless of strand. This is done using the CDS
+## annotation. For the EU822322 accession in the above example, 
+## the strand string is '+-+----'.
+##
+## This strand string defines a genome's class in that all genomes
+## with the same string are put into the same class.
+## 
+###############################################
+## Creating .ntlist files for all virus genomes
+###############################################
+##
+## The script make-ntlists.pl will create a set of .ntlist files for
+## all viral genomes in the NCBI viral genome resource using a
+## specific input file which can be downloaded from 
+## 'http://www.ncbi.nlm.nih.gov/genome/viruses/' using the link
+## 'Accession list of all viral genomes'.
+##
+## Here is that file (renamed by me) as downloaded on May 29, 2015:
+## 
+## > ls -ltr all-viral-genomes-052915.nbr 
+## -rw-r----- 1 nawrocke oblast 8640647 May 29 14:31 all-viral-genomes-052915.nbr
+##
+## To use make-ntlist.pl:
+##
+## > perl make-ntlists.pl all-viral-genomes-052915.nbr
+##
+## This will create a lot of .ntlist files (about 6000) each of which
+## contains all the accessions for genomes of a particular viral
+## species.  The first accession will be the 'representative
+## accession' for that species. These are always REFSEQ accessions
+## (start with N followed by one alphabetic character followed by 
+##  one underscore, e.g. NC_010435). In the case where a species
+## has > 1 representative accessions, the first one listed in the
+## .nbr file is selected as the representative.
+##
+## As a consequence of this and of how classes are defined 
+## (discussed more above), the representative accession for 
+## a species is always in class 1.
+##
+#####################################################
+## Finding out the species a .ntlist file pertains to
+#####################################################
+## 
+## Easiest way to (currently) determine this is to grep the .nbr file
+## for the representative accession:
+## 
+## For example: 
+## > grep NC_010435 all-viral-genomes-052915.nbr | head -n1
+## NC_010435	HM448898	plants	Geminiviridae,Begomovirus,Kenaf leaf curl virus	Kenaf leaf curl virus	segment  
+## 
+## The second line of the .nbr file gives the column meanings:
+## ## Columns:	"Representative"	"Neighbor"	"Host"	"Selected lineage"	"Taxonomy name"	"Segment name"
+##
+##
+#############################################
+# Last updated: EPN, Fri May 29 14:42:39 2015
+#############################################
+#
+# This directory is under git control. Use
+# git commands to see revision history.
+#
+############################################
