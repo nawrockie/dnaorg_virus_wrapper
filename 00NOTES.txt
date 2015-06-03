@@ -81,14 +81,14 @@ source /panfs/pan1/dnaorg/programs/setup-bio-easel.csh.sh
 # line that starts with 'dnaorg_compare_genomes.pl:'
 # 
 ## > perl dnaorg_virus_wrapper.pl NC_010435.ntlist 
-## Step 1: creating feature table ... done. [perl /panfs/pan1/dnaorg/programs/dnaorg_fetch_dna_wrapper.pl -f -ntlist -ftable -d NC_010435 NC_010435.ntlist > /dev/null]
-## Step 2: parsing feature table ... done. [perl /panfs/pan1/dnaorg/programs/dnaorg_parse_ftable.pl -d NC_010435 NC_010435/NC_010435.ftable NC_010435 > /dev/null]
-## Step 3: comparing genomes ... done. [perl /panfs/pan1/dnaorg/programs/dnaorg_compare_genomes.pl NC_010435 NC_010435/NC_010435.ntlist.not_suppressed > NC_010435/NC_010435.compare]
+#Step 1: creating feature table ... done. [perl /panfs/pan1/dnaorg/programs/dnaorg_fetch_dna_wrapper.pl -f -ntlist -ftable -d NC_010435 NC_010435.ntlist > /dev/null]
+#Step 2: parsing feature table ... done. [perl /panfs/pan1/dnaorg/programs/dnaorg_parse_ftable.pl -d NC_010435 NC_010435/NC_010435.ftable NC_010435 > /dev/null]
+#Step 3: comparing genomes ... done. [perl /panfs/pan1/dnaorg/programs/dnaorg_compare_genomes.pl NC_010435 NC_010435/NC_010435.ntlist.not_suppressed > NC_010435/NC_010435.compare]
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ## dnaorg_compare_genomes.pl: Compare GenBank annotation of genomes
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ## command: /panfs/pan1/dnaorg/programs/dnaorg_compare_genomes.pl  NC_010435 NC_010435/NC_010435.ntlist.not_suppressed
-## date:    Fri May 29 14:13:11 2015
+## date:    Wed Jun  3 15:54:14 2015
 ##
 ##accn       #cds   #pos   #neg  #both  #unkn  strand-string  cls  tot-len       g1     g2     g3     g4     g5     g6     g7
 #NC_010435      7      2      5      0      0  +-+----          1     2740      348    318    771    405    453   1092    300
@@ -101,10 +101,14 @@ source /panfs/pan1/dnaorg/programs/setup-bio-easel.csh.sh
 #FN806777       6      2      4      0      0  ++----           2     2750      348    771    405    453   1092    300
 #
 #
-#Number-of-classes:                 2
-#Number-of-genes-in-class-1:        7
-#Number-of-genes-in-class-2:        6
-#Average-number-of-genes-per-class: 6.5
+## Number-of-classes: 2
+## class  #accn  #genes  strand-string
+## -----  -----  ------  -------------
+#      1      4       7  +-+----
+#      2      3       6  ++----
+## -----  -----  ------  -------------
+#  total      7      13  N/A
+#    avg    3.5     6.5  N/A
 #
 ## Fetching   4 sequences for class  1 gene  1 ... done. [NC_010435/NC_010435.c1.g1.fa]
 ## Fetching   4 sequences for class  1 gene  2 ... done. [NC_010435/NC_010435.c1.g2.fa]
@@ -119,6 +123,7 @@ source /panfs/pan1/dnaorg/programs/setup-bio-easel.csh.sh
 ## Fetching   3 sequences for class  2 gene  4 ... done. [NC_010435/NC_010435.c2.g4.fa]
 ## Fetching   3 sequences for class  2 gene  5 ... done. [NC_010435/NC_010435.c2.g5.fa]
 ## Fetching   3 sequences for class  2 gene  6 ... done. [NC_010435/NC_010435.c2.g6.fa]
+##
 ## 
 ###########################################
 ## Naming convention for output fasta files
