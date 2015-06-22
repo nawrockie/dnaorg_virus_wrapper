@@ -52,7 +52,7 @@ printf("done. [$cmd]\n");
 
 # Step 3: compare genomes 
 printf("Step 3: comparing genomes ... ");
-$cmd = "perl $compare_genomes -s -product -protid $outdir $outdir/$accn.ntlist.not_suppressed > $outdir/$outdirroot.compare"; 
+$cmd = "perl $compare_genomes -s -product -protid -codonstart $outdir $outdir/$accn.ntlist.not_suppressed > $outdir/$outdirroot.compare"; 
 runCommand($cmd, 0);
 printf("done. [$cmd]\n");
 
