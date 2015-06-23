@@ -11,6 +11,7 @@ my $exec_dir = "/panfs/pan1/dnaorg/programs/";
 my $fetch_wrapper   = $exec_dir . "dnaorg_fetch_dna_wrapper.pl";
 my $parse_ftable    = $exec_dir . "dnaorg_parse_ftable.pl";
 my $compare_genomes = $exec_dir . "dnaorg_compare_genomes.pl";
+my $esl_test_cds    = $exec_dir . "esl-test-cds-translate-vs-fetch.pl";
 
 my $usage  = "\ndnaorg_virus_wrapper.pl\n";
 $usage .= "\t<list of accessions with representative genome first (must end in .ntlist)>\n";
@@ -52,10 +53,31 @@ printf("done. [$cmd]\n");
 
 # Step 3: compare genomes 
 printf("Step 3: comparing genomes ... ");
-$cmd = "perl $compare_genomes -s -product -protid -codonstart $outdir $outdir/$accn.ntlist.not_suppressed > $outdir/$outdirroot.compare"; 
+my$compare_outfile = "$outdir/$outdirroot.compare"; 
+$cmd = "perl $compare_genomes -s -product -protid -codonstart $outdir $outdir/$accn.ntlist.not_suppressed > $compare_outfile"; 
 runCommand($cmd, 0);
 printf("done. [$cmd]\n");
 
+# Step 4: test CDS sequences
+# we need to parse the $compare_genomes output to determine the names of the files to test:
+printf("Step 4: checking CDS sequences against protein sequences ... ");
+open(IN, $compare_outfile) || die "ERROR, unable to open $compare_outfile for reading"; 
+while(my $line = <IN>) { 
+  chomp $line;
+## Fetching   2 CDS sequences for class  1 gene  2 ... perl /panfs/pan1/dnaorg/programs/esl-fetch-cds.pl -onlyaccn Maize-streak_r23.NC_001346/Maize-streak_r23.NC_001346.c1.g2.esl-fetch-cds.in > Maize-streak_r23.NC_001346/Maize-streak_r23.NC_001346.c1.g2.fa
+  if($line =~ s/^# Fetching\s+\d+\s+CDS sequences for class\s+\d+\s+gene\s+\d+\s+.+\>\s+//) { 
+    my $infile  = $line;
+    my $outfile = $infile;
+    $outfile =~ s/\.fa$/.cds-test/;
+    $cmd = "perl $esl_test_cds -incompare $infile > $outfile";
+    printf("\tcmd: $cmd\n");
+    runCommand($cmd, 0);
+  }
+}
+close(IN);
+printf("done. [$cmd]\n");
+
+# Finished. 
 # Output $accn.compare file 
 $cmd = "cat $outdir/$outdirroot.compare";
 runCommand($cmd, 0);
