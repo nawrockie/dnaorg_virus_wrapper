@@ -70,7 +70,6 @@ while(my $line = <IN>) {
     my $outfile = $infile;
     $outfile =~ s/\.fa$/.cds-test/;
     $cmd = "perl $esl_test_cds -incompare $infile > $outfile";
-    printf("\tcmd: $cmd\n");
     runCommand($cmd, 0);
   }
 }
