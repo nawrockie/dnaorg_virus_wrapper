@@ -58,23 +58,27 @@ $cmd = "perl $compare_genomes -s -product -protid -codonstart $outdir $outdir/$a
 runCommand($cmd, 0);
 printf("done. [$cmd]\n");
 
-# Step 4: test CDS sequences
-# we need to parse the $compare_genomes output to determine the names of the files to test:
-printf("Step 4: checking CDS sequences against protein sequences ... ");
-open(IN, $compare_outfile) || die "ERROR, unable to open $compare_outfile for reading"; 
-while(my $line = <IN>) { 
-  chomp $line;
-## Fetching   2 CDS sequences for class  1 gene  2 ... perl /panfs/pan1/dnaorg/programs/esl-fetch-cds.pl -onlyaccn Maize-streak_r23.NC_001346/Maize-streak_r23.NC_001346.c1.g2.esl-fetch-cds.in > Maize-streak_r23.NC_001346/Maize-streak_r23.NC_001346.c1.g2.fa
-  if($line =~ s/^# Fetching\s+\d+\s+CDS sequences for class\s+\d+\s+gene\s+\d+\s+.+\>\s+//) { 
-    my $infile  = $line;
-    my $outfile = $infile;
-    $outfile =~ s/\.fa$/.cds-test/;
-    $cmd = "perl $esl_test_cds -incompare $infile > $outfile";
-    runCommand($cmd, 0);
-  }
-}
-close(IN);
-printf("done. [$cmd]\n");
+################################
+# TEMPORARILY (?) INACTIVATED
+## Step 4: test CDS sequences
+## we need to parse the $compare_genomes output to determine the names of the files to test:
+#printf("Step 4: checking CDS sequences against protein sequences ... ");
+#open(IN, $compare_outfile) || die "ERROR, unable to open $compare_outfile for reading"; 
+#while(my $line = <IN>) { 
+#  chomp $line;
+### Fetching   2 CDS sequences for class  1 gene  2 ... perl /panfs/pan1/dnaorg/programs/esl-fetch-cds.pl -onlyaccn Maize-streak_r23.NC_001346/Maize-streak_r23.NC_001346.c1.g2.esl-fetch-cds.in > Maize-streak_r23.NC_001346/Maize-streak_r23.NC_001346.c1.g2.fa
+#  if($line =~ s/^# Fetching\s+\d+\s+CDS sequences for class\s+\d+\s+gene\s+\d+\s+.+\>\s+//) { 
+#    my $infile  = $line;
+#    my $outfile = $infile;
+#    $outfile =~ s/\.fa$/.cds-test/;
+#    $cmd = "perl $esl_test_cds -incompare $infile > $outfile";
+#    runCommand($cmd, 0);
+#  }
+#}
+#close(IN);
+#printf("done. [$cmd]\n");
+#
+###############################
 
 # Finished. 
 # Output $accn.compare file 
