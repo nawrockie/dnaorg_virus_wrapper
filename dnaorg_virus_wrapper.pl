@@ -46,7 +46,7 @@ my $infile;
 if(! -s $listfile) { die "ERROR $listfile does not exist or is empty"; }
 # Step 1: create feature table or fetch mat_peptide info with dnaorg_fetch_dna_wrapper.pl:
 printf("%s ... ", ($do_matpept) ? "Step 1: fetching mat_peptide info" : "Step 1: creating feature table");
-$option = ($do_matpept) ? "-matpept" : "ftable";
+$option = ($do_matpept) ? "-matpept" : "-ftable";
 $cmd    = "perl $fetch_wrapper -f -ntlist $option -d $outdir $listfile > /dev/null";
 runCommand($cmd, 0);
 printf("done. [$cmd]\n");
