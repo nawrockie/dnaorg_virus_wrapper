@@ -18,7 +18,7 @@ $usage .= "\t<list of accessions with representative genome first (must end in .
 $usage .= "\n";
 $usage .= " OPTIONS:\n";
 $usage .= " -d <s>   : create directory called <s> instead of auto-determined dir name\n";
-$usage .= " -matpept : run dnaorg_fetch_dna_wrapper.pl with -matpept instead of -ftable\n";
+$usage .= " -matpept : run dnaorg_fetch_dna_wrapper.pl with -matpept\n";
 $usage .= "\n";
 
 my $outdir = undef;
@@ -45,20 +45,28 @@ my $infile;
 
 if(! -s $listfile) { die "ERROR $listfile does not exist or is empty"; }
 # Step 1: create feature table or fetch mat_peptide info with dnaorg_fetch_dna_wrapper.pl:
-printf("%s ... ", ($do_matpept) ? "Step 1: fetching mat_peptide info" : "Step 1: creating feature table");
-$option = ($do_matpept) ? "-matpept" : "-ftable";
+printf("%s ... ", ($do_matpept) ? "Step 1: fetching feature table and mat_peptide info" : "Step 1: creating feature table");
+$option = "-ftable";
+if($do_matpept) { $option .= " -matpept"; }
 $cmd    = "perl $fetch_wrapper -f -ntlist $option -d $outdir $listfile > /dev/null";
 runCommand($cmd, 0);
 printf("done. [$cmd]\n");
 
 # Step 2: parse feature table into CDS and other tables (or mat_peptide) table with dnaorg_parse_ftable.pl OR
 #         parse mat_peptide data into a MATPEPT table
-printf("Step 2: parsing feature table ... ");
-$option = ($do_matpept) ? "-matpept" : "";
-$infile = ($do_matpept) ? "$outdir/$outdirroot.mat_peptide" : "$outdir/$outdirroot.ftable";
-$cmd    = "perl $parse_ftable $option -d $outdirroot $infile $outdirroot > /dev/null"; 
+printf("Step 2%s: parsing feature table ... ", ($do_matpept) ? "A" : "");
+$infile = "$outdir/$outdirroot.ftable";
+$cmd    = "perl $parse_ftable -d $outdirroot $infile $outdirroot > /dev/null"; 
 runCommand($cmd, 0);
 printf("done. [$cmd]\n");
+
+if($do_matpept) { 
+  printf("Step 2B: parsing mat_peptide table ... ");
+  $infile = "$outdir/$outdirroot.mat_peptide";
+  $cmd    = "perl $parse_ftable -matpept -d $outdirroot $infile $outdirroot > /dev/null"; 
+  runCommand($cmd, 0);
+  printf("done. [$cmd]\n");
+}
 
 # Step 3: compare genomes 
 printf("Step 3: comparing genomes ... ");
